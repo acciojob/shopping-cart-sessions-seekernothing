@@ -1,7 +1,3 @@
-// This is the boilerplate code given for you
-// You can modify this code
-// Product data
-
 const products = [
   { id: 1, name: "Product 1", price: 10 },
   { id: 2, name: "Product 2", price: 20 },
@@ -68,14 +64,12 @@ function clearCart() {
   renderCart();
 }
 
-// Event listeners for Add to Cart buttons
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      const productId = parseInt(this.dataset.id);
-      addToCart(productId);
-    });
-  });
+// Event delegation for Add to Cart buttons
+productList.addEventListener('click', (event) => {
+  if (event.target.classList.contains('add-to-cart-btn')) {
+    const productId = parseInt(event.target.dataset.id);
+    addToCart(productId);
+  }
 });
 
 // Event listener for Clear Cart button
