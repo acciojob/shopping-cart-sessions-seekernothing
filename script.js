@@ -13,6 +13,7 @@ const clearCartBtn = document.getElementById("clear-cart-btn");
 
 // Render product list
 function renderProducts() {
+  productList.innerHTML = ''; // Clear existing products
   products.forEach((product) => {
     const li = document.createElement("li");
     li.innerHTML = `${product.name} - $${product.price} <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>`;
@@ -24,7 +25,6 @@ function renderProducts() {
 function renderCart() {
   const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
   cartList.innerHTML = '';
-
   cart.forEach(item => {
     const li = document.createElement('li');
     li.textContent = `${item.name} - $${item.price}`;
@@ -41,7 +41,9 @@ function addToCart(productId) {
   const product = products.find(p => p.id === productId);
   if (product) {
     const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
-    cart.push(product);
+    // Create a new object to avoid reference issues
+    const newItem = { ...product };
+    cart.push(newItem);
     sessionStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
   }
@@ -50,6 +52,7 @@ function addToCart(productId) {
 // Remove item from cart
 function removeFromCart(productId) {
   let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+  // Only remove one instance of the item
   const index = cart.findIndex(item => item.id === productId);
   if (index !== -1) {
     cart.splice(index, 1);
