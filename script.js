@@ -43,15 +43,17 @@ function saveCart(cart) {
 }
 
 // Add item to cart (Fixed: Now appends instead of overwriting)
+// Add item to cart
 function addToCart(productId) {
   const product = products.find(p => p.id === productId);
   if (product) {
-    let cart = getCart();
-    cart.push({ id: product.id, name: product.name, price: product.price }); // Append instead of replacing
-    saveCart(cart);
+    let cart = getCart(); // Get existing cart items
+    cart.push({ id: product.id, name: product.name, price: product.price }); // Append new product
+    saveCart(cart); // Save updated cart
     renderCart();
   }
 }
+
 
 // Clear cart
 function clearCart() {
