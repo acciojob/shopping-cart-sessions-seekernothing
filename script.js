@@ -42,13 +42,12 @@ function saveCart(cart) {
   sessionStorage.setItem('cart', JSON.stringify(cart));
 }
 
-// Add item to cart
+// Add item to cart (Fixed: Now appends instead of overwriting)
 function addToCart(productId) {
   const product = products.find(p => p.id === productId);
   if (product) {
-    // Important: This needs to match exactly what the test expects
-    // Creating a new cart with the specific product
-    const cart = [{ id: product.id, name: product.name, price: product.price }];
+    let cart = getCart();
+    cart.push({ id: product.id, name: product.name, price: product.price }); // Append instead of replacing
     saveCart(cart);
     renderCart();
   }
