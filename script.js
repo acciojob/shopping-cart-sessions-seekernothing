@@ -6,72 +6,64 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
-// DOM elements
 const productList = document.getElementById("product-list");
 const cartList = document.getElementById("cart-list");
 const clearCartBtn = document.getElementById("clear-cart-btn");
 
-// Render product list
-function renderProducts() {
-  productList.innerHTML = ''; // Clear existing products
-  products.forEach((product) => {
-    const li = document.createElement("li");
-    li.innerHTML = `${product.name} - $${product.price} <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>`;
-    productList.appendChild(li);
-  });
+// Load existing cart from sessionStorage or initialize an empty array
+function getCart() {
+  return JSON.parse(sessionStorage.getItem("cart")) || [];
 }
 
-// Render cart list
+// Save cart to sessionStorage
+function saveCart(cart) {
+  sessionStorage.setItem("cart", JSON.stringify(cart));
+}
+
+// Render the cart items in the UI
 function renderCart() {
+  cartList.innerHTML = ""; // Clear previous items
   const cart = getCart();
-  cartList.innerHTML = '';
-  cart.forEach(item => {
-    const li = document.createElement('li');
-    li.textContent = `${item.name} - $${item.price}`;
+
+  cart.forEach((product) => {
+    const li = document.createElement("li");
+    li.textContent = `${product.name} - $${product.price}`;
     cartList.appendChild(li);
   });
 }
 
-// Get cart from session storage
-function getCart() {
-  return JSON.parse(sessionStorage.getItem('cart')) || [];
-}
-
-// Save cart to session storage
-function saveCart(cart) {
-  sessionStorage.setItem('cart', JSON.stringify(cart));
-}
-
-// Add item to cart (Fixed: Now appends instead of overwriting)
-// Add item to cart
+// Function to add product to cart
 function addToCart(productId) {
   const product = products.find(p => p.id === productId);
   if (product) {
-    let cart = getCart(); // Get existing cart items
-    cart.push({ id: product.id, name: product.name, price: product.price }); // Append new product
-    saveCart(cart); // Save updated cart
-    renderCart();
+    let cart = getCart();
+    cart.push({ id: product.id, name: product.name, price: product.price }); // Append product
+    saveCart(cart); // Save updated cart to sessionStorage
+    renderCart(); // Update UI
   }
 }
 
-
-// Clear cart
+// Function to clear cart
 function clearCart() {
-  sessionStorage.removeItem('cart');
-  renderCart();
+  sessionStorage.removeItem("cart"); // Remove cart from sessionStorage
+  renderCart(); // Clear UI
 }
 
-// Event delegation for Add to Cart buttons
-productList.addEventListener('click', (event) => {
-  if (event.target.classList.contains('add-to-cart-btn')) {
-    const productId = parseInt(event.target.dataset.id);
-    addToCart(productId);
-  }
+// Initialize Product List UI
+products.forEach((product) => {
+  const li = document.createElement("li");
+  li.textContent = `${product.name} - $${product.price}`;
+
+  const button = document.createElement("button");
+  button.textContent = "Add to Cart";
+  button.onclick = () => addToCart(product.id); // Add product to cart on click
+
+  li.appendChild(button);
+  productList.appendChild(li);
 });
 
-// Event listener for Clear Cart button
-clearCartBtn.addEventListener('click', clearCart);
+// Attach clear cart button event
+clearCartBtn.addEventListener("click", clearCart);
 
-// Initial render
-renderProducts();
+// Render cart on page load (restore from sessionStorage)
 renderCart();
